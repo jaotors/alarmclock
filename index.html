@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alarm Clock</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Alarm Clock</h1>
+    <p class="row clock">
+      <span class="hh">00</span>:
+      <span class="mm">00</span>:
+      <span class="ss">00</span>
+      <span class="ampm">AM</span>
+    </p>
+    
+    <div class="main-container">
+      <!-- adding an alarm -->
+      <div class="add-alarm-container">
+        <h2>Add an alarm</h2>
+        <ul class="row add-alarm">
+          <li class="hours">
+            <p>Hours</p>
+            <input id="inputHours" type="text">
+          </li>
+          <li class="minutes">
+            <p>Minutes</p>
+            <input id="inputMinutes" type="text">
+          </li>
+          <li>
+            <p>AM/PM</p>
+            <select name="valAmPm" id="inputAmPm">
+              <option value="am">AM</option>
+              <option value="pm">PM</option>
+            </select>
+          </li>
+        </ul>
+        <div class="note-alarm">
+          <input id="inputNote" type="text">
+        </div>
+        <div class="btn-container">
+          <button class="btn-add-alarm">Add</button>
+        </div>
+      </div>
+
+      <!-- list of alarms -->
+      <div class="list-alarm-container">
+        <ul class="list-alarm"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+input, select {
+  width: 100%;
+}
+
+h1 {
+  margin-bottom: 15px;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+.container {
+  width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.clock {
+  justify-content: center;
+  font-size: 25px;
+  margin: 5px 0;
+}
+
+.add-alarm {
+  align-items: flex-end;
+}
+
+.add-alarm li {
+  width: 33%;
+}
+
+.add-alarm li p {
+  margin: 0;
+  text-align: center;
+}
+
+.note-alarm {
+  margin-bottom: 10px;
+}
+
+.btn-add-alarm {
+  width: 100%;
+}
+
+.list-alarm li {
+  text-align: left;
+}
+
+.list-alarm li input[type="checkbox"] {
+  vertical-align: middle;
+  width: auto;
+}

@@ -1,8 +1,12 @@
 (function() {
 
   //set clock
-  let date = new Date()
-  let seconds = date.getSeconds(), ampm = ''
+  let storeTime = {
+    hours: '',
+    minutes: '',
+    seconds: '',
+    ampm: '',
+  }
   let setHours = document.getElementsByClassName('hh')[0]
   let setMinutes = document.getElementsByClassName('mm')[0]
   let setSeconds = document.getElementsByClassName('ss')[0]
@@ -18,10 +22,10 @@
 
   let checkZero = (number) => {
     if(number < 10) {
-      number = ('0' + number)
+      number = ('0' + number).slice(-2)
     }
 
-    return number 
+    return number
   }
 
   let changeTwelveHours = (hours) => {
@@ -30,8 +34,13 @@
 
   let updateTicks = () => {
     let date = new Date()
-    ampm = (date.getHours() < 12) ? 'AM' : 'PM'
+    let ampm = (date.getHours() < 12) ? 'AM' : 'PM'
     date.setSeconds(date.getSeconds());
+
+    storeTime.hours = date.getHours()
+    storeTime.minutes = date.getMinutes()
+    storeTime.seconds = date.getSeconds()
+    storeTime.ampm = ampm
     
     setSeconds.innerHTML = checkZero(date.getSeconds())
     setMinutes.innerHTML = checkZero(date.getMinutes())
@@ -154,8 +163,7 @@
   }
 
   let refreshClock = () => {
-    date = new Date()
-    ampm = ''
+    let date = new Date()
     setHours.innerHTML = checkZero(changeTwelveHours(date.getHours()))
     setMinutes.innerHTML = checkZero(date.getMinutes())
     setSeconds.innerHTML = checkZero(date.getSeconds())
@@ -175,7 +183,7 @@
 
   // set alarm to true
   let activateAlarm = () => {
-    let checker = checkZero(changeTwelveHours(date.getHours())) + ':' + checkZero(date.getMinutes()) + ':' + checkZero(date.getSeconds()) + ampm
+    let checker = checkZero(changeTwelveHours(storeTime.hours)) + ':' + checkZero(storeTime.minutes) + ':' + checkZero(storeTime.seconds) + storeTime.ampm
     alarmList.map((alarm) => {
       if(alarm.check && alarm.title != checker) {
         alarm.alarm = true
@@ -184,15 +192,16 @@
   }
 
   //start
-  setHours.innerHTML = checkZero(changeTwelveHours(date.getHours()))
-  setMinutes.innerHTML = checkZero(date.getMinutes())
-  setSeconds.innerHTML = checkZero(date.getSeconds())
-  setAmPm.innerHTML = (date.getHours() < 12) ? 'AM' : 'PM'
+  let initialDate = new Date()
+  setHours.innerHTML = checkZero(changeTwelveHours(initialDate.getHours()))
+  setMinutes.innerHTML = checkZero(initialDate.getMinutes())
+  setSeconds.innerHTML = checkZero(initialDate.getSeconds())
+  setAmPm.innerHTML = (initialDate.getHours() < 12) ? 'AM' : 'PM'
 
   let clock = setInterval(() => {
     updateTicks()
 
-    let checker = checkZero(changeTwelveHours(date.getHours())) + ':' + checkZero(date.getMinutes()) + ':' + checkZero(date.getSeconds()) + ampm
+    let checker = checkZero(changeTwelveHours(storeTime.hours)) + ':' + checkZero(storeTime.minutes) + ':' + checkZero(storeTime.seconds) + storeTime.ampm
     alarmList.map((alarm, index) => {
       if (alarm.check && alarm.time == checker && alarm.alarm) {
         alarmNow(index)

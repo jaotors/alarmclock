@@ -15,6 +15,7 @@
   let inputNote = document.getElementById('inputNote')
   let ulListAlarm = document.getElementsByClassName('list-alarm')[0]
   let alarmInputs = '';
+  let sound = document.getElementById('alarmSound')
 
   let checkZero = (number) => {
     if(number < 10) {
@@ -41,6 +42,7 @@
 
     seconds = checkZero(seconds)
     setSeconds.innerHTML = seconds
+    activateAlarm();
   }
 
   let updateMinutes = (min) => {
@@ -55,7 +57,6 @@
 
     minutes = min
     setMinutes.innerHTML = min
-    activateAlarm();
   }
 
   let checkAmPm = (hour) => {
@@ -212,14 +213,14 @@
 
 
   // alarm
-  let alarmNow = () => {
+  let alarmNow = (i) => {
     //integrate sound
-    console.log('OINK OINK OINK OINK!!!')
-    /*let count = 0;
-    let alarm = setInterval(() => {
-      (count > 60) ? clearInterval(alarm) : console.log('OINK OINK OINK OINK!!!')
-      count++
-    }, 1000)*/
+    sound.play()
+    sound.addEventListener('ended', () => {
+      document.getElementsByClassName('stopAlarm')[i].disabled = true
+      sound.currentTime = 0
+    })
+    
   }
 
   // set alarm to true
@@ -247,12 +248,14 @@
 
     alarmList.map((alarm, index) => {
       if (alarm.check && alarm.time == checker && alarm.alarm) {
-        alarmNow()
+        alarmNow(index)
         let btnStop = document.getElementsByClassName('stopAlarm')[index]
         btnStop.disabled = false
         btnStop.addEventListener('click', (e) => {
           alarmList[e.target.dataset.index].alarm = false
           e.target.disabled = true
+          sound.pause()
+          sound.currentTime = 0;
         })
       }
     })

@@ -2,7 +2,7 @@
 
   //set clock
   let date = new Date()
-  let hours = date.getHours(), minutes = date.getMinutes(), seconds = date.getSeconds(), ampm = '', mHours = 0
+  let hours = date.getHours(), minutes = date.getMinutes(), seconds = date.getSeconds(), ampm = ''
   let setHours = document.getElementsByClassName('hh')[0]
   let setMinutes = document.getElementsByClassName('mm')[0]
   let setSeconds = document.getElementsByClassName('ss')[0]
@@ -33,55 +33,38 @@
     return number
   }
 
-  let updateSeconds = () => {
+  let changeTwelveHours = (hours) => {
+    return ((parseInt(hours) + 11) % 12) + 1
+  }
+
+  let updateTicks = () => {
+    ampm = (hours < 12) ? 'AM' : 'PM'
+    
+    seconds++
     seconds = udpateSixty(seconds)
+    seconds = checkZero(seconds)
 
     if(seconds == 0) {
-      updateMinutes(minutes)
+      minutes++
+      minutes = udpateSixty(minutes)
+      minutes = checkZero(minutes)
+
+      if(minutes == 0 && seconds == 0) {
+        hours++
+
+        if(hours > 23) {
+          hours = 0
+        }
+      }
     }
 
-    seconds = checkZero(seconds)
-    setSeconds.innerHTML = seconds
-    activateAlarm();
-  }
-
-  let updateMinutes = (min) => {
-    min++
-    min = udpateSixty(min)
-    min = checkZero(min)
-
-    if(min == 0) {
-      hours++
-      updateHours(hours)
-    }
-
-    minutes = min
-    setMinutes.innerHTML = min
-  }
-
-  let checkAmPm = (hour) => {
-    let last = ''
-    if(hour < 12) {
-      last = 'AM'
-    } else {
-      last = 'PM'
-    }
-
-    return last
-  }
-
-  let updateHours = (hr) => {
-    if(hours > 23) {
-      hours = 0
-    }
-
-    hr = ((parseInt(hr) + 11) % 12) + 1
-    ampm = checkAmPm(hours)
-    hr = checkZero(hr)
-    mHours = hr;
     
-    setHours.innerHTML = hr
+    setSeconds.innerHTML = seconds
+    setHours.innerHTML = checkZero(changeTwelveHours(hours))
+    setMinutes.innerHTML = minutes
     setAmPm.innerHTML = ampm
+
+    activateAlarm();
   }
 
   let validateInput = (e) => {
@@ -203,10 +186,10 @@
     minutes = date.getMinutes()
     seconds = date.getSeconds() 
     ampm = ''
-    mHours = 0
     minutes = checkZero(minutes)
     seconds = checkZero(seconds)
-    updateHours(hours)
+    hours = checkZero(hours)
+    setHours.innerHTML = hours
     setMinutes.innerHTML = minutes
     setSeconds.innerHTML = seconds
   }
@@ -225,7 +208,7 @@
 
   // set alarm to true
   let activateAlarm = () => {
-    let checker = (mHours + ':' + minutes + ':' + seconds + ampm)
+    let checker = ((((parseInt(hours) + 11) % 12) + 1) + ':' + minutes + ':' + seconds + ampm)
     alarmList.map((alarm) => {
       if(alarm.check && alarm.title != checker) {
         alarm.alarm = true
@@ -234,18 +217,16 @@
   }
 
   //start
-  minutes = checkZero(minutes)
-  seconds = checkZero(seconds)
-  updateHours(hours)
-  setMinutes.innerHTML = minutes
-  setSeconds.innerHTML = seconds
+  
+  setHours.innerHTML = checkZero(((parseInt(hours) + 11) % 12) + 1)
+  setMinutes.innerHTML = checkZero(minutes)
+  setSeconds.innerHTML = checkZero(seconds)
+  setAmPm.innerHTML = (hours < 12) ? 'AM' : 'PM'
 
   let clock = setInterval(() => {
-    updateSeconds()
-    seconds++
+    updateTicks()
 
-    let checker = (mHours + ':' + minutes + ':' + seconds + ampm)
-
+    let checker = (checkZero(changeTwelveHours(hours)) + ':' + minutes + ':' + seconds + ampm)
     alarmList.map((alarm, index) => {
       if (alarm.check && alarm.time == checker && alarm.alarm) {
         alarmNow(index)

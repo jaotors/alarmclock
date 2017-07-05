@@ -79,6 +79,7 @@ h2 {
 
 .list-alarm li {
   text-align: left;
+  margin-bottom: 10px;
 }
 
 .list-alarm li input[type="checkbox"] {
@@ -86,6 +87,7 @@ h2 {
   width: auto;
 }
 
-.list-alarm li .stopAlarm {
+.list-alarm li button {
   float: right;
+  margin-left: 10px;
 }

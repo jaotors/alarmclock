@@ -1,6 +1,5 @@
 # alarmclock
 ## vanilla javascript
 
-validation
-  - stopping the alarm.
-  - alarm must close in after 1min. Must apply in all.
+Integrate
+  - integrate sound in alarm -> ring once and stop it if click stop button

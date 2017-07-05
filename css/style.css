@@ -30,6 +30,15 @@ h2 {
   margin-bottom: 10px;
 }
 
+.clearfix:before,
+.clearfix:after {
+  content: "";
+  display: table;
+} 
+.clearfix:after {
+  clear: both;
+}
+
 .container {
   width: 500px;
   margin: 0 auto;
@@ -75,4 +84,8 @@ h2 {
 .list-alarm li input[type="checkbox"] {
   vertical-align: middle;
   width: auto;
+}
+
+.list-alarm li .stopAlarm {
+  float: right;
 }

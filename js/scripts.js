@@ -60,7 +60,7 @@
     let last = ''
     if(hour < 12) {
       last = 'AM'
-    } else if(hour >= 12) {
+    } else {
       last = 'PM'
     }
 
@@ -82,7 +82,10 @@
   }
 
   let validateInput = (e) => {
-    value = e.target.value
+    let value = e.target.value
+    let reg = new RegExp(/(?:\d*)?\d+/g)
+    let res = reg.test(value)   
+
     if(value.length > 1) {
       e.preventDefault()
     }
@@ -106,24 +109,13 @@
     ulListAlarm.innerHTML = '';
     alarmList.map((time, index) => {
       let li = document.createElement('li')
-      li.innerHTML = '<input type="checkbox" class="alarmInputs" name="alarms" value=' + time.time + '> <span>' + time.time + '</span> ' + time.note
+      let check = time.check ? 'checked' : ''
+      li.innerHTML = '<input type="checkbox" class="alarmInputs" name="alarms" value=' + time.time + ' data-index="' + index + '"  ' + check + '> <span>' + time.time + '</span> ' + time.note
 
       ulListAlarm.append(li);
     })
 
-    if(alarmInputs === '') {
-      listInit()
-    }
-  }
-
-  // pushing of alarm in list of actives
-  let addAlarmActive = (check, value) => {
-    if(check) {
-      alarmListActivate.push(value);
-    } else {
-      let del = alarmListActivate.indexOf(value);
-      alarmListActivate.splice(del, 1);
-    }
+    listInit();
   }
 
 
@@ -132,14 +124,19 @@
 
     for(ai of alarmInputs) {
       ai.addEventListener('click', (e) => {
-        addAlarmActive(e.target.checked, e.target.value)
+        alarmList[e.target.dataset.index].check = e.target.checked
       })
     }
   }
 
   // alarm
   let alarmNow = () => {
-    console.log('OINK OINK OINK OINK!!!');
+    let count = 0;
+    let alarm = setInterval(() => {
+      if(count > 60) clearInterval(alarm)
+      console.log('OINK OINK OINK OINK!!!')
+      count++
+    }, 1000)
   }
 
 
@@ -155,17 +152,13 @@
   }, 1000)
 
   let alarmClock = setInterval(() => {
-    console.log(alarmListActivate)
-    if(alarmListActivate.length > 0) {
-      let checker = (mHours + ':' + minutes + ampm);
-      console.log(alarmListActivate + '  ' + checker);
-      let testAlarm = alarmListActivate.filter((active) => {
-        return active == checker
-      })
-      if (testAlarm.length > 0) {
-        
+    let checker = (mHours + ':' + minutes + ampm)
+    console.log(alarmListActivate + '  ' + checker);
+    alarmList.map((alarm) => {
+      if (alarm.check && alarm.time == checker) {
+        alarmNow()
       }
-    }
+    })
   }, 1000)
 
   inputHours.addEventListener('keypress', validateInput)
@@ -176,6 +169,7 @@
   let alarmObj = {
     time: '',
     note: '',
+    check: false,
   }
 
   btnAddAlarm.addEventListener('click', addAlarm)

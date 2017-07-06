@@ -2,10 +2,10 @@
 
   //set clock
   let storeTime = {
-    hours: '',
-    minutes: '',
-    seconds: '',
-    ampm: '',
+    hours: (new Date()).getHours(),
+    minutes: (new Date()).getMinutes(),
+    seconds: (new Date()).getSeconds(),
+    ampm: ((new Date()).getHours() < 12) ? 'AM' : 'PM',
   }
   let setHours = document.getElementsByClassName('hh')[0]
   let setMinutes = document.getElementsByClassName('mm')[0]
@@ -24,12 +24,18 @@
     if(number < 10) {
       number = ('0' + number).slice(-2)
     }
-
     return number
   }
 
   let changeTwelveHours = (hours) => {
     return ((parseInt(hours) + 11) % 12) + 1
+  }
+
+  let setTimeHtml = (time = {hours, minutes, seconds, ampm}) => {
+    setSeconds.innerHTML = addZero(time.seconds)
+    setMinutes.innerHTML = addZero(time.minutes)
+    setHours.innerHTML = addZero(changeTwelveHours(time.hours))
+    setAmPm.innerHTML = time.ampm
   }
 
   let updateTicks = () => {
@@ -42,10 +48,16 @@
     storeTime.seconds = date.getSeconds()
     storeTime.ampm = ampm
     
-    setSeconds.innerHTML = addZero(date.getSeconds())
+    /*setSeconds.innerHTML = addZero(date.getSeconds())
     setMinutes.innerHTML = addZero(date.getMinutes())
     setHours.innerHTML = addZero(changeTwelveHours(date.getHours()))
-    setAmPm.innerHTML = ampm
+    setAmPm.innerHTML = ampm*/
+    setTimeHtml({
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+      seconds: date.getSeconds(),
+      ampm: ampm
+    })
     activateAlarm();
   }
 
@@ -150,8 +162,6 @@
     for(dlBtn of delBtns) {
       dlBtn.addEventListener('click', deleteAlarm)
     }
-
-
   }
 
   let clearInput = () => {
@@ -164,9 +174,12 @@
 
   let refreshClock = () => {
     let date = new Date()
-    setHours.innerHTML = addZero(changeTwelveHours(date.getHours()))
-    setMinutes.innerHTML = addZero(date.getMinutes())
-    setSeconds.innerHTML = addZero(date.getSeconds())
+    setTimeHtml({
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+      seconds: date.getSeconds(),
+      ampm: (date.getHours() < 12) ? 'AM' : 'PM'
+    })
   }
 
 
@@ -184,6 +197,7 @@
 
   // set alarm to true
   let activateAlarm = () => {
+
     let checker = addZero(changeTwelveHours(storeTime.hours)) + ':' + addZero(storeTime.minutes) + ':' + addZero(storeTime.seconds) + storeTime.ampm
     alarmList.map((alarm) => {
       if(alarm.check && alarm.title != checker) {
@@ -193,12 +207,7 @@
   }
 
   //start
-  let initialDate = new Date()
-  setHours.innerHTML = addZero(changeTwelveHours(initialDate.getHours()))
-  setMinutes.innerHTML = addZero(initialDate.getMinutes())
-  setSeconds.innerHTML = addZero(initialDate.getSeconds())
-  setAmPm.innerHTML = (initialDate.getHours() < 12) ? 'AM' : 'PM'
-
+  setTimeHtml(storeTime)
   let clock = setInterval(() => {
     updateTicks()
 

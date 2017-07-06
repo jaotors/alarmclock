@@ -20,6 +20,7 @@
   let ulListAlarm = document.getElementsByClassName('list-alarm')[0]
   let sound = document.getElementById('alarmSound')
 
+  //utils
   let addZero = (number) => {
     if(number < 10) {
       number = ('0' + number).slice(-2)
@@ -38,6 +39,35 @@
     setAmPm.innerHTML = time.ampm
   }
 
+  let clearInput = () => {
+    inputHours.value = ''
+    inputMinutes.value = ''
+    inputSeconds.value = ''
+    inputAmPm.selectedIndex = 0
+    inputNote.value = ''
+  }
+
+  let refreshClock = () => {
+    let date = new Date()
+    setTimeHtml({
+      hours: date.getHours(),
+      minutes: date.getMinutes(),
+      seconds: date.getSeconds(),
+      ampm: (date.getHours() < 12) ? 'AM' : 'PM'
+    })
+  }
+
+  let validateInput = (e) => {
+    let value = e.target.value
+    let reg = new RegExp(/(?:\d*)\d+/g)
+    let res = reg.test(e.key)
+    
+    if(value.length > 1 || !res) {
+      e.preventDefault()
+    }
+  }
+
+  /*main function*/
   let updateTicks = () => {
     let date = new Date()
     let ampm = (date.getHours() < 12) ? 'AM' : 'PM'
@@ -54,22 +84,15 @@
     activateAlarm();
   }
 
-  let validateInput = (e) => {
-    let value = e.target.value
-    let reg = new RegExp(/(?:\d*)\d+/g)
-    let res = reg.test(e.key)
-    
-    if(value.length > 1 || !res) {
-      e.preventDefault()
-    }
-  }
-
-
-  // adding an alarm
+  //adding an alarm
   let addAlarm = () => {
     let alarm = Object.create(alarmObj)
+    let hours = addZero(inputHours.value)
+    let minutes = addZero(inputMinutes.value)
+    let seconds = addZero(inputSeconds.value)
+    let ampm = inputAmPm.value.toUpperCase()
     
-    let time = addZero(inputHours.value) + ':' + addZero(inputMinutes.value) + ':' + addZero(inputSeconds.value) + inputAmPm.value.toUpperCase()
+    let time =  `${hours}:${minutes}:${seconds}${ampm}`
     alarm.time = time
     alarm.note = inputNote.value
 
@@ -81,29 +104,24 @@
   //edit an alarm
   let editAlarm = (e) => {
     let index = e.target.dataset.index
+    let time = alarmList[index].time.match(/[a-zA-Z]+|[0-9]+/g)
 
-    if(e.target.innerHTML === 'EDIT') {
-      e.target.innerHTML = 'SAVE'
-      let time = alarmList[index].time.match(/[a-zA-Z]+|[0-9]+/g)
+    inputHours.value = time[0]
+    inputMinutes.value = time[1]
+    inputSeconds.value = time[2]
+    inputAmPm.selectedIndex = time[3] === 'AM' ? 0 : 1
+    inputNote.value = alarmList[index].note
+  }
 
-      inputHours.value = time[0]
-      inputMinutes.value = time[1]
-      inputSeconds.value = time[2]
-      inputAmPm.selectedIndex = time[3] === 'AM' ? 0 : 1
-      inputNote.value = alarmList[index].note
-
-      document.getElementsByClassName('delete-alarm')[0].disabled = true
-      btnAddAlarm.disabled = true
-
-    } else {
-      e.target.innerHTML = 'EDIT'
-      alarmList[index].time = addZero(inputHours.value) + ':' + addZero(inputMinutes.value) + ':' + addZero(inputSeconds.value) + inputAmPm.value.toUpperCase()
-      alarmList[index].note = inputNote.value
-      clearInput()
-      document.getElementsByClassName('delete-alarm')[0].disabled = false
-      btnAddAlarm.disabled = false
-      listAlarm()
-    }
+  //save an alarm
+  let saveAlarm = (e) => {
+    let index = e.target.dataset.index
+    let hours = addZero(inputHours.value),
+        minutes = addZero(inputMinutes.value),
+        seconds = addZero(inputSeconds.value),
+        ampm = inputAmPm.value.toUpperCase()
+    alarmList[index].time = `${hours}:${minutes}:${seconds}${ampm}`
+    alarmList[index].note = inputNote.value
   }
 
   //delete an alarm
@@ -126,7 +144,10 @@
       let li = document.createElement('li')
       let check = time.check ? 'checked' : ''
       li.className += 'clearfix'
-      li.innerHTML = '<input type="checkbox" class="alarmInputs" name="alarms" value=' + time.time + ' data-index="' + index + '"  ' + check + '> <span>' + time.time + '</span> ' + time.note + '<button class="stopAlarm" data-index="' + index + '" disabled>STOP ALARM</button><button class="delete-alarm" data-index="' + index + '">DELETE</button><button class="edit-alarm" data-index="' + index + '">EDIT</button>'
+      li.innerHTML = `<input type="checkbox" class="alarmInputs" name="alarms" value="${time.time}" data-index="${index}" ${check}>
+                      <span>${time.time}</span>${time.note}<button class="stopAlarm" data-index="${index}" disabled>STOP ALARM</button>
+                      <button class="delete-alarm" data-index="${index}">DELETE</button>
+                      <button class="edit-alarm" data-index="${index}">EDIT</button>`
 
       ulListAlarm.append(li)
     })
@@ -134,6 +155,7 @@
     listInit()
   }
 
+  //to instantiate the non-existent
   let listInit = () => {
     let alarmInputs = document.getElementsByClassName('alarmInputs')
     let editBtns = document.getElementsByClassName('edit-alarm')
@@ -147,32 +169,32 @@
     }
 
     for(eBtn of editBtns) {
-      eBtn.addEventListener('click', editAlarm)
+      eBtn.addEventListener('click', (e) => {
+        if(e.target.innerHTML === 'EDIT') {
+          e.target.innerHTML = 'SAVE'
+          
+          editAlarm(e)
+
+          document.getElementsByClassName('delete-alarm')[0].disabled = true
+          btnAddAlarm.disabled = true
+
+        } else {
+          e.target.innerHTML = 'EDIT'
+
+          saveAlarm(e)
+
+          clearInput()
+          document.getElementsByClassName('delete-alarm')[0].disabled = false
+          btnAddAlarm.disabled = false
+          listAlarm()
+        }
+      })
     }
 
     for(dlBtn of delBtns) {
       dlBtn.addEventListener('click', deleteAlarm)
     }
   }
-
-  let clearInput = () => {
-    inputHours.value = ''
-    inputMinutes.value = ''
-    inputSeconds.value = ''
-    inputAmPm.selectedIndex = 0
-    inputNote.value = ''
-  }
-
-  let refreshClock = () => {
-    let date = new Date()
-    setTimeHtml({
-      hours: date.getHours(),
-      minutes: date.getMinutes(),
-      seconds: date.getSeconds(),
-      ampm: (date.getHours() < 12) ? 'AM' : 'PM'
-    })
-  }
-
 
   // alarm
   let alarmNow = (i) => {
@@ -188,7 +210,6 @@
 
   // set alarm to true
   let activateAlarm = () => {
-
     let checker = addZero(changeTwelveHours(storeTime.hours)) + ':' + addZero(storeTime.minutes) + ':' + addZero(storeTime.seconds) + storeTime.ampm
     alarmList.map((alarm) => {
       if(alarm.check && alarm.title != checker) {

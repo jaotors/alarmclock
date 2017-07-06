@@ -22,7 +22,10 @@
 
   /*utils*/
   let changeTwelveHours = (hours) => {
-    return ((parseInt(hours) + 11) % 12) + 1
+    const hour = ((parseInt(hours) + 11) % 12) + 1
+    const udpatedHour =  hour < 10 ? `0${hour}` : hour
+
+    return udpatedHour
   }
 
   let setTimeHtml = (time = {hours, minutes, seconds, ampm}) => {
@@ -215,6 +218,7 @@
   let alarmNow = (i) => {
     //integrate sound
     sound.play()
+    console.log('alarm start')
     sound.addEventListener('ended', () => {
       document.getElementsByClassName('stopAlarm')[i].disabled = true
       sound.currentTime = 0

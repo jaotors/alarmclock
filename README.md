@@ -2,4 +2,4 @@
 ## vanilla javascript
 
 Notes
-  - remove checkZero function.
+  - FINAL REJECTED

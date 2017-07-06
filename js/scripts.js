@@ -43,30 +43,21 @@
     let ampm = (date.getHours() < 12) ? 'AM' : 'PM'
     date.setSeconds(date.getSeconds());
 
-    storeTime.hours = date.getHours()
-    storeTime.minutes = date.getMinutes()
-    storeTime.seconds = date.getSeconds()
-    storeTime.ampm = ampm
-    
-    /*setSeconds.innerHTML = addZero(date.getSeconds())
-    setMinutes.innerHTML = addZero(date.getMinutes())
-    setHours.innerHTML = addZero(changeTwelveHours(date.getHours()))
-    setAmPm.innerHTML = ampm*/
-    setTimeHtml({
+    storeTime = {
       hours: date.getHours(),
       minutes: date.getMinutes(),
       seconds: date.getSeconds(),
       ampm: ampm
-    })
+    }
+
+    setTimeHtml(storeTime)
     activateAlarm();
   }
 
   let validateInput = (e) => {
-
     let value = e.target.value
     let reg = new RegExp(/(?:\d*)\d+/g)
     let res = reg.test(e.key)
-
     
     if(value.length > 1 || !res) {
       e.preventDefault()
